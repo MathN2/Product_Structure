@@ -16,12 +16,12 @@ def explosao(produto: ArvoreFormula):
     }
 
     for child in root.children:
-        resultado["componentes"].append(formatacao_explosao(child))
+        resultado["componentes"].append(_formatacao_explosao(child))
 
     return resultado
 
 
-def formatacao_explosao(node: Node):
+def _formatacao_explosao(node: Node):
     resultado = {
         "nome": node.value.nome,
         "quantidade": node.value.quantidade,
@@ -30,6 +30,6 @@ def formatacao_explosao(node: Node):
     }
 
     for child in node.children:
-        resultado["componentes"].append(formatacao_explosao(child))
+        resultado["componentes"].append(_formatacao_explosao(child))
 
     return resultado
