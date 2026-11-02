@@ -1,4 +1,4 @@
-from product_structure.core.generic_tree import ArvoreFormula
+from product_structure.core.formula import ArvoreFormula
 from product_structure.core.node import Node
 
 

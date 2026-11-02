@@ -1,8 +1,12 @@
 class ItemFormula:
-    def __init__(self, nome, quantidade, preco=0):
+    def __init__(self, nome, descricao="", quantidade=0, preco=0):
         self.nome = nome
+        self.descricao = descricao
         self.quantidade = quantidade
         self.preco = preco
+
+    def atualizar_descricao(self, new_desc):
+        self.descricao = new_desc
 
     def atualizar_quantidade(self, new_qtd):
         if new_qtd >= 0:

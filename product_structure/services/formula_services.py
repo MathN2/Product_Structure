@@ -1,6 +1,6 @@
-from product_structure.core.generic_tree import ArvoreFormula
-from product_structure.core.node import Node
 from product_structure.core.exceptions import *
+from product_structure.core.formula import ArvoreFormula
+from product_structure.core.node import Node
 
 
 def explosao(produto: ArvoreFormula):
