@@ -9,8 +9,7 @@ CREATE TABLE itens (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(150) NOT NULL,
     descricao TEXT,
-    preco NUMERIC(12,2) NOT NULL DEFAULT 0,
-    -- data_cadastro DATE DEFAULT CURRENT_DATE
+    preco NUMERIC(12,2) NOT NULL DEFAULT 0
 );
 
 -- 2. TABELA DE FÓRMULAS
@@ -29,16 +28,19 @@ CREATE TABLE item_formula (
 
     CONSTRAINT fk_formula
         FOREIGN KEY (formula_id)
-        REFERENCES formula(id)
+        REFERENCES formula(id),
 
 
     CONSTRAINT fk_formula_item
         FOREIGN KEY (item_id)
         REFERENCES itens(id),
 
+    CONSTRAINT uq_formula_item
+        UNIQUE (formula_id, id),
+
     CONSTRAINT fk_formula_pai
-        FOREIGN KEY (parent_id)
-        REFERENCES formula(id)
+        FOREIGN KEY (formula_id, parent_id)
+        REFERENCES item_formula(formula_id, id)
         ON DELETE CASCADE,
 
     CONSTRAINT chk_quantidade
@@ -54,19 +56,6 @@ CREATE INDEX idx_formula_item
 
 CREATE INDEX idx_formula_pai
     ON item_formula(parent_id);
-
--- =====================================================
--- 8. ATUALIZAÇÃO DAS SEQUÊNCIAS AUTOMÁTICAS
--- =====================================================
-
-SELECT setval('formula_id_seq',
-    (SELECT MAX(id) FROM formula));
-
-SELECT setval('itens_id_seq',
-    (SELECT MAX(id) FROM itens));
-
-SELECT setval('item_formula_id_seq',
-    (SELECT MAX(id) FROM item_formula));
 
 -- =====================================================
 -- FIM DO SCRIPT
