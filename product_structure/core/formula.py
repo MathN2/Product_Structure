@@ -74,6 +74,3 @@ class ArvoreFormula:
             resultado += node.value.preco
 
         return resultado
-
-    def explosao(self):
-        pass

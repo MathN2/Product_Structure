@@ -1,6 +1,6 @@
 from product_structure.dto.item_dto import ItemDTO
 from product_structure.models.item_formula import ItemFormula
-from product_structure.repository.item_repository import inserir, buscar_todos
+from product_structure.repository.item_repository import inserir, atualizar, remover, buscar_todos, buscar_por_id, buscar_por_nome
 
 
 def cadastrar_item(item_dto: ItemDTO):
@@ -12,10 +12,19 @@ def cadastrar_item(item_dto: ItemDTO):
     inserir(item_dto)
 
 
-def buscar_item(item_dto: ItemDTO):
-    pass
+def atualizar_item(item_dto: ItemDTO):
+    atualizar(item_dto)
+
+
+def remover_item(id):
+    remover(id)
 
 
 def buscar_todos_itens():
-    lista_itens = buscar_todos()
-    return lista_itens
+    return buscar_todos()
+
+def buscar_item_nome(nome):
+    return buscar_por_nome(nome)
+
+def buscar_item_id(id):
+    return buscar_por_id(id)

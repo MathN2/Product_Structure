@@ -3,16 +3,16 @@ from product_structure.core.formula import ArvoreFormula
 from product_structure.core.node import Node
 
 
-def explosao(produto: ArvoreFormula):
-    if produto.root is None:
+def explosao(formula: ArvoreFormula):
+    if formula.root is None:
         raise TreeEmptyError("Árvore vazia.")
 
-    root = produto.root
+    root = formula.root
 
     resultado = {
         "nome": root.value.nome,
         "descricao": root.value.descricao,
-        "preco": produto.implosao(),
+        "preco": formula.implosao(),
         "componentes": [],
     }
 
@@ -35,3 +35,6 @@ def _formatacao_explosao(node: Node):
         resultado["componentes"].append(_formatacao_explosao(child))
 
     return resultado
+
+def implosao(formula: ArvoreFormula):
+    pass
