@@ -1,7 +1,7 @@
 from product_structure.core.formula import ArvoreFormula
 from product_structure.core.node import Node
 from product_structure.models.item_formula import ItemFormula
-from product_structure.services.formula_services import explosao
+from product_structure.services.formula_service import explosao
 
 
 def test_explosao():

@@ -11,6 +11,7 @@ def explosao(produto: ArvoreFormula):
 
     resultado = {
         "nome": root.value.nome,
+        "descricao": root.value.descricao,
         "preco": produto.implosao(),
         "componentes": [],
     }
@@ -24,6 +25,7 @@ def explosao(produto: ArvoreFormula):
 def _formatacao_explosao(node: Node):
     resultado = {
         "nome": node.value.nome,
+        "descricao": node.value.descricao,
         "quantidade": node.value.quantidade,
         "preco": node.value.preco,
         "componentes": [],
