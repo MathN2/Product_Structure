@@ -12,6 +12,9 @@ class TreeEmptyError(TreeError):
 class FormulaAlreadyExistsError(TreeError):
     pass
 
+class FormulaNotFoundError(TreeError):
+    pass
+
 
 # =====================
 #  EXCEPTIONS DO NODE

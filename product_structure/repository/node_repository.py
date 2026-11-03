@@ -17,3 +17,17 @@ def inserir_item_formula(item: NodeDTO):
 
         item_id = cursor.fetchone()
         return item_id
+
+
+def implosao_produto(formula_id):
+    with get_connection() as conn, conn.cursor() as cursor:
+        cursor.execute(
+            """
+                SELECT SUM(preco) AS total
+                FROM item_formula
+                WHERE formula_id = %s
+            """,
+            (formula_id,)
+        )
+
+        return cursor.fetchone()

@@ -13,7 +13,10 @@ from product_structure.repository.item_repository import (
     buscar_item_por_id_bd,
     buscar_item_por_nome_bd,
 )
-from product_structure.repository.node_repository import inserir_item_formula
+from product_structure.repository.node_repository import (
+    inserir_item_formula,
+    implosao_produto
+)
 from product_structure.services.item_service import criar_item
 
 
@@ -132,7 +135,7 @@ def explosao(formula: ArvoreFormula):
     resultado = {
         "nome": root.value.nome,
         "descricao": root.value.descricao,
-        "preco": implosao(formula),
+        "preco": implosao(formula.id),
         "componentes": [],
     }
 
@@ -157,5 +160,10 @@ def _formatacao_explosao(node: Node):
     return resultado
 
 
-def implosao(formula: ArvoreFormula):
-    pass
+def implosao(formula_id):
+    resultado_busca = buscar_formula_por_id(formula_id)
+
+    if resultado_busca is None:
+        raise FormulaNotFoundError("Não foi possivel encontrar a formula no sistema.")
+    
+    return implosao_produto(formula_id)
