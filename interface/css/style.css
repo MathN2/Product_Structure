@@ -1,0 +1,47 @@
+#centralizar{
+    margin: auto;
+    margin-top: 3%;
+    width: 25%;
+    height: fit-content;
+    border: 1px solid grey;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+#botaoenviar{
+    text-align: center;
+    width: 100;
+    height: fit-content;
+}
+
+#precoquant{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+#labelprecoquant{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+#label1{
+    width: 50%;
+}
+
+#label2{
+    width: 50%;
+    margin-left: 5%;
+}
+
+#divselect{
+    width: 100%;
+}
+
+#listaitens{
+    width: 75%;
+    margin: auto;
+    margin-top: 2%;
+}
