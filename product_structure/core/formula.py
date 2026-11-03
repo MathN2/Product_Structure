@@ -3,7 +3,9 @@ from product_structure.core.node import Node
 
 
 class ArvoreFormula:
-    def __init__(self):
+    def __init__(self, id, nome):
+        self.id = id
+        self.nome = nome
         self.root: Node | None = None
         self.nodes: dict[int, Node] = {}
 
@@ -35,8 +37,9 @@ class ArvoreFormula:
             raise NodeEmptyError("Node não pode ser None.")
 
         if node.node_id in self.nodes:
-            if not node.parent is None:
-                node.parent.children.remove(node)
+            if not node.parent_id is None:
+                parent = self.nodes[node.parent_id]
+                parent.children.remove(node)
 
             self.nodes.pop(node.node_id)
 
@@ -59,18 +62,5 @@ class ArvoreFormula:
         for node in self.nodes.values():
             if node.value.nome == name:
                 resultado[node.node_id] = node
-
-        return resultado
-
-    def implosao(self):
-        if not self.nodes:
-            return
-
-        resultado = 0
-        for node in self.nodes.values():
-            if node.parent is None:
-                continue
-
-            resultado += node.value.preco
 
         return resultado

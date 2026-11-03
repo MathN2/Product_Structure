@@ -4,7 +4,12 @@
 class TreeError(Exception):
     pass
 
+
 class TreeEmptyError(TreeError):
+    pass
+
+
+class FormulaAlreadyExistsError(TreeError):
     pass
 
 
@@ -14,7 +19,16 @@ class TreeEmptyError(TreeError):
 class NodeError(Exception):
     pass
 
+
 class NodeEmptyError(NodeError):
+    pass
+
+
+class NodeValueError(NodeError):
+    pass
+
+
+class NodeAlreadyExistsError(NodeError):
     pass
 
 
@@ -23,6 +37,7 @@ class NodeEmptyError(NodeError):
 # =====================
 class ItemError(Exception):
     pass
+
 
 class ItemBeingUsedError(ItemError):
     pass

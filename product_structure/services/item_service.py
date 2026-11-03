@@ -1,30 +1,51 @@
 from product_structure.dto.item_dto import ItemDTO
 from product_structure.models.item_formula import ItemFormula
-from product_structure.repository.item_repository import inserir, atualizar, remover, buscar_todos, buscar_por_id, buscar_por_nome
+from product_structure.repository.item_repository import (
+    atualizar_item_bd,
+    buscar_item_por_id_bd,
+    buscar_item_por_nome_bd,
+    buscar_todos_itens_bd,
+    inserir_item_bd,
+    remover_item_bd,
+)
 
 
+# ====================================
+#       FUNÇOES BANCO DE DADOS
+# ====================================
 def cadastrar_item(item_dto: ItemDTO):
+    item = criar_item(item_dto)
+    inserir_item_bd(item_dto)
+
+    return item
+
+
+def atualizar_item(item_dto: ItemDTO):
+    atualizar_item_bd(item_dto)
+
+
+def remover_item(id):
+    remover_item_bd(id)
+
+
+def buscar_todos_itens():
+    return buscar_todos_itens_bd()
+
+
+def buscar_item_nome(nome):
+    return buscar_item_por_nome_bd(nome)
+
+
+def buscar_item_id(id):
+    return buscar_item_por_id_bd(id)
+
+
+# ====================================
+#          FUNÇOES DA ARVORE
+# ====================================
+def criar_item(item_dto: ItemDTO):
     nome = item_dto.nome
     descricao = item_dto.descricao
     preco = item_dto.preco
 
-    ItemFormula(nome, descricao, preco)
-    inserir(item_dto)
-
-
-def atualizar_item(item_dto: ItemDTO):
-    atualizar(item_dto)
-
-
-def remover_item(id):
-    remover(id)
-
-
-def buscar_todos_itens():
-    return buscar_todos()
-
-def buscar_item_nome(nome):
-    return buscar_por_nome(nome)
-
-def buscar_item_id(id):
-    return buscar_por_id(id)
+    return ItemFormula(nome, descricao, preco)

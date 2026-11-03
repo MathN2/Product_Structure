@@ -7,7 +7,7 @@
 -- 1. TABELA DE ITENS
 CREATE TABLE itens (
     id SERIAL PRIMARY KEY,
-    nome VARCHAR(150) NOT NULL,
+    nome VARCHAR(150) NOT NULL UNIQUE,
     descricao TEXT,
     preco NUMERIC(12,2) NOT NULL DEFAULT 0
 );
