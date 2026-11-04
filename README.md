@@ -64,6 +64,47 @@ poetry install
 
 O Poetry utilizará as configurações do projeto para instalar as dependências necessárias.
 
+3. Configure as variáveis de ambiente
+
+O projeto utiliza um arquivo ".env" para armazenar configurações da aplicação e credenciais de acesso ao banco de dados.
+
+Na raiz do projeto, copie o arquivo de exemplo:
+
+Linux:
+
+```bash
+cp .env.example .env
+```
+
+Windows:
+
+```cmd
+copy .env.example .env
+```
+
+Abra o arquivo ".env" e configure as variáveis de acordo com seu ambiente:
+
+```bash
+APP_NAME="Product Structure"
+APP_ENV=development
+APP_PORT=8000
+APP_URL=http://localhost
+APP_SECRET_KEY=replace_with_your_own_secret_key
+
+DATABASE_URL=postgresql://seu_user:sua_senha@localhost:5432/product_structure
+```
+
+Altere principalmente:
+
+- "APP_SECRET_KEY": substitua pelo valor de uma chave secreta própria.
+- "DATABASE_URL": informe o usuário, a senha, o endereço, a porta e o nome do banco PostgreSQL.
+
+O formato da conexão é:
+
+`postgresql://USUARIO:SENHA@HOST:PORTA/NOME_DO_BANCO`
+
+Importante: o arquivo ".env" contém informações sensíveis e não deve ser enviado ao repositório. Utilize o ".env.example" como modelo para outros ambientes.
+
 ## Executando o projeto
 
 Com o banco PostgreSQL configurado em `DATABASE_URL`, inicie a API e a interface com:
