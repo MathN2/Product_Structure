@@ -76,13 +76,13 @@ Na raiz do projeto, copie o arquivo de exemplo:
 cp .env.example .env
 ```
 
-::Windows (CMD)
+## Windows (CMD)
 
 ```cmd
 copy .env.example .env
 ```
 
-::Windows (Powershell)
+## Windows (Powershell)
 
 ```pwsh
 Copy-Item .env.example .env
