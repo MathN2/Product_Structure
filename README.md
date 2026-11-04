@@ -69,7 +69,7 @@ O Poetry utilizará as configurações do projeto para instalar as dependências
 Com o banco PostgreSQL configurado em `DATABASE_URL`, inicie a API e a interface com:
 
 ```bash
-poetry run uvicorn product_structure.api.main:app --reload
+poetry run task run_uvicorn
 ```
 
 Abra `http://127.0.0.1:8000/` para usar a interface. A documentação interativa da API fica em `http://127.0.0.1:8000/docs`; `http://127.0.0.1:8000/health` verifica a API.
