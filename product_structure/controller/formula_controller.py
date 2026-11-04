@@ -1,21 +1,23 @@
-from fastapi import APIRouter
+from typing import Annotated
+
+from fastapi import APIRouter, Query
 
 from product_structure.dto.node_dto import NodeDTO
-
 from product_structure.schemas.formula_scheme import FormulaCreate
-from product_structure.schemas.node_schema import NodeCreate
-
+from product_structure.schemas.node_schema import NodeCreate, NodeUpdate
 from product_structure.services.formula_service import (
     atualizar_nome_formula,
-    buscar_todas_formulas,
+    atualizar_quantidade_node,
     buscar_arvore_formula,
+    buscar_todas_formulas,
     criar_formula,
     explosao,
-    inserir_node as inserir_node_formula,
     remover_formula,
     remover_item_formula,
 )
-
+from product_structure.services.formula_service import (
+    inserir_node as inserir_node_formula,
+)
 
 router = APIRouter(
     prefix="/formulas",
@@ -31,9 +33,11 @@ def listar_formulas():
     return buscar_todas_formulas()
 
 @router.get("/{formula_id}")
-def buscar_formula(formula_id: int):
+def buscar_formula(
+    formula_id: int, quantidade_producao: Annotated[int, Query(ge=1)] = 1
+):
     arvore = buscar_arvore_formula(formula_id)
-    return explosao(arvore)
+    return explosao(arvore, quantidade_producao)
 
 # ====================================
 #               POST
@@ -68,6 +72,18 @@ def criar_node(formula_id: int, node: NodeCreate):
 # ====================================
 #               PATCH
 # ====================================
+
+@router.patch("/{formula_id}/nodes/{node_id}")
+def atualizar_node(
+    formula_id: int, node_id: int, node: NodeUpdate
+):
+    atualizar_quantidade_node(formula_id, node_id, node.quantidade)
+    return {
+        "mensagem": "Quantidade do componente atualizada com sucesso.",
+        "node_id": node_id,
+        "quantidade": node.quantidade,
+    }
+
 
 @router.patch("/{formula_id}")
 def atualizar_formula(formula_id: int, formula: FormulaCreate):

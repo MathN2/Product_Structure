@@ -19,6 +19,20 @@ def inserir_item_formula(item: NodeDTO):
         return item_id
 
 
+def atualizar_quantidade_item_formula(formula_id, node_id, quantidade):
+    with get_connection() as conn, conn.cursor(row_factory=dict_row) as cursor:
+        cursor.execute(
+            """
+                UPDATE item_formula
+                SET quantidade = %s
+                WHERE formula_id = %s AND id = %s
+                RETURNING id;
+            """,
+            (quantidade, formula_id, node_id),
+        )
+        return cursor.fetchone()
+
+
 def remover_item_formula_bd(node_id):
     with get_connection() as conn, conn.cursor(row_factory=dict_row) as cursor:
         cursor.execute(
@@ -75,16 +89,41 @@ def verificar_item_formula_existe(item_formula_id):
         return cursor.fetchone()
 
 
-def implosao_produto(formula_id):
+def implosao_produto(formula_id, quantidade_producao=1):
     with get_connection() as conn, conn.cursor(row_factory=dict_row) as cursor:
         cursor.execute(
             """
-                SELECT SUM(i.preco * if.quantidade) AS total
-                FROM item_formula AS if
-                JOIN itens AS i ON i.id = if.item_id
-                WHERE if.formula_id = %s;
-            """,
-            (formula_id,),
-        )
+                WITH RECURSIVE explosao AS (
+                    SELECT
+                        id,
+                        formula_id,
+                        item_id,
+                        parent_id,
+                        quantidade * %s::numeric AS quantidade_total
+                    FROM item_formula
+                    WHERE formula_id = %s AND parent_id IS NULL
 
+                    UNION ALL
+
+                    SELECT
+                        filho.id,
+                        filho.formula_id,
+                        filho.item_id,
+                        filho.parent_id,
+                        filho.quantidade * pai.quantidade_total
+                    FROM item_formula AS filho
+                    JOIN explosao AS pai
+                      ON filho.parent_id = pai.id
+                     AND filho.formula_id = pai.formula_id
+                )
+                SELECT COALESCE(
+                    SUM(i.preco * e.quantidade_total)
+                        FILTER (WHERE e.parent_id IS NOT NULL),
+                    0
+                ) AS total
+                FROM explosao AS e
+                JOIN itens AS i ON i.id = e.item_id;
+            """,
+            (quantidade_producao, formula_id),
+        )
         return cursor.fetchone()

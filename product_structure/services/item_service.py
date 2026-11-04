@@ -1,5 +1,4 @@
 from product_structure.core.exceptions import ItemError
-
 from product_structure.dto.item_dto import ItemDTO
 from product_structure.models.item_formula import ItemFormula
 from product_structure.repository.item_repository import (
@@ -27,11 +26,11 @@ def cadastrar_item(item_dto: ItemDTO):
 
 
 def atualizar_item(item_dto: ItemDTO):
-    atualizar_item_bd(item_dto)
+    return atualizar_item_bd(item_dto)
 
 
 def remover_item(id):
-    remover_item_bd(id)
+    return remover_item_bd(id)
 
 
 def buscar_todos_itens():

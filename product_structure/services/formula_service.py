@@ -1,7 +1,6 @@
 from product_structure.core.exceptions import *
 from product_structure.core.formula import ArvoreFormula
 from product_structure.core.node import Node
-from product_structure.dto.item_dto import ItemDTO
 from product_structure.dto.node_dto import NodeDTO
 from product_structure.repository.formula_repository import (
     atualizar_nome_formula_bd,
@@ -16,6 +15,7 @@ from product_structure.repository.item_repository import (
     buscar_item_por_nome_bd,
 )
 from product_structure.repository.node_repository import (
+    atualizar_quantidade_item_formula,
     buscar_item_formula_bd,
     buscar_itens_formula_bd,
     implosao_produto,
@@ -113,6 +113,19 @@ def remover_formula(formula_id):
     remover_formula_bd(formula_id)
 
 
+def atualizar_quantidade_node(formula_id, node_id, quantidade):
+    arvore = buscar_arvore_formula(formula_id)
+    if node_id not in arvore.nodes:
+        raise NodeValueError("Componente não encontrado nesta fórmula.")
+
+    atualizado = atualizar_quantidade_item_formula(
+        formula_id, node_id, quantidade
+    )
+    if atualizado is None:
+        raise NodeValueError("Não foi possível atualizar a quantidade.")
+    return atualizado
+
+
 def remover_item_formula(node_id):
     resultado_busca = verificar_item_formula_existe(node_id)
 
@@ -171,7 +184,7 @@ def _criar_node_dto(node_dto: NodeDTO):
 def _criar_node_dict(item_dict: dict):
     item_preparado = item_dict
 
-    if "item_id" in item_dict.keys():
+    if "item_id" in item_dict:
         item_preparado = buscar_item_por_id_bd(item_dict.get("item_id"))
         
         if item_preparado is None:
@@ -243,43 +256,58 @@ def buscar_arvore_formula(formula_id):
 
 
 # FUNÇOES COMPLEMENTARES
-def explosao(formula: ArvoreFormula):
+def explosao(formula: ArvoreFormula, quantidade_producao: int = 1):
     if formula.root is None:
         raise TreeEmptyError("Árvore vazia.")
 
     root = formula.root
 
+    if quantidade_producao < 1:
+        raise NodeValueError("A quantidade a produzir deve ser maior que zero.")
+
+    custo = implosao(formula.id, quantidade_producao)
     resultado = {
         "node_id": root.node_id,
         "nome": root.value.nome,
         "descricao": root.value.descricao,
-        "preco": implosao(formula.id),
+        "quantidade_producao": quantidade_producao,
+        "preco": custo,
+        "custo_aquisicao": custo["total"],
         "componentes": [],
     }
 
     for child in root.children:
-        resultado["componentes"].append(_formatacao_explosao(child))
+        resultado["componentes"].append(
+            _formatacao_explosao(child, quantidade_producao)
+        )
 
     return resultado
 
 
-def _formatacao_explosao(node: Node):
+def _formatacao_explosao(node: Node, multiplicador: int = 1):
+    quantidade_total = node.quantidade * multiplicador
+    preco_unitario = float(node.value.preco)
     resultado = {
         "node_id": node.node_id,
         "nome": node.value.nome,
         "descricao": node.value.descricao,
-        "quantidade": node.quantidade,
-        "preco": node.value.preco,
+        "quantidade": quantidade_total,
+        "quantidade_por_unidade": node.quantidade,
+        "preco": preco_unitario,
+        "preco_unitario": preco_unitario,
+        "custo_aquisicao": preco_unitario * quantidade_total,
         "componentes": [],
     }
 
     for child in node.children:
-        resultado["componentes"].append(_formatacao_explosao(child))
+        resultado["componentes"].append(
+            _formatacao_explosao(child, quantidade_total)
+        )
 
     return resultado
 
 
-def implosao(formula_id):
+def implosao(formula_id, quantidade_producao: int = 1):
     resultado_busca = buscar_formula_por_id(formula_id)
 
     if resultado_busca is None:
@@ -287,7 +315,7 @@ def implosao(formula_id):
             "Não foi possivel encontrar a formula no sistema."
         )
 
-    return implosao_produto(formula_id)
+    return implosao_produto(formula_id, quantidade_producao)
 
 
 # VALIDAÇAO
