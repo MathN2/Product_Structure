@@ -1,206 +1,84 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<!doctype html>
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teste python api</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7f5">
+  <title>Estrutura — Product Structure</title>
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<div id="background">
-  <div id="centralizar">
-<form class="row g-3">
-  <div class="col-12">
-    <label for="inputAddress2" class="form-label">Nome</label>
-    <input type="text" class="form-control" id="inputAddress2" placeholder="Insira o nome do produto ou componente">
-  </div>
-      <div class="col-md-4" id="divselect">
-    <label for="inputState" class="form-label">Compontente Pai</label>
-    <select id="inputState" class="form-select">
-      <option selected>Nenhum (Novo Produto)</option>
-      <option>...</option>
-    </select>
-  </div>
-    <div class="col-md-6">
-    <label for="inputEmail4" class="form-label">Quantidade</label>
-    <input type="number" class="form-control" id="0" placeholder="1">
-  </div>
-  <div class="col-md-6">
-    <label for="inputPassword4" class="form-label">Preço</label>
-    <input type="number" class="form-control" min="0" placeholder="0,00">
-  </div>
-  <div class="col-12" id="botaoenviar">
-    <button type="submit" class="btn btn-success">Cadastrar</button>
-  </div>
-</form>
-</div>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#inicio" aria-label="Product Structure, início">
+        <span class="brand-mark">P</span>
+        <span><strong>Product</strong><small>STRUCTURE</small></span>
+      </a>
+      <div class="side-label">ESPAÇO DE TRABALHO</div>
+      <nav class="side-nav" aria-label="Navegação principal">
+        <button class="nav-link active" data-view="inicio"><span>◫</span> Visão geral</button>
+        <button class="nav-link" data-view="itens"><span>▦</span> Itens <em id="navItemCount">0</em></button>
+        <button class="nav-link" data-view="formulas"><span>⌘</span> Fórmulas <em id="navFormulaCount">0</em></button>
+      </nav>
+      <div class="sidebar-note"><span class="note-icon">✳</span><strong>Estruturas claras.</strong><p>Organize componentes e acompanhe cada fórmula do produto.</p></div>
+      <div class="sidebar-footer"><span class="status-dot"></span><span id="connectionLabel">Conectando à API…</span></div>
+    </aside>
 
-<div id="listaitens">
+    <div class="main-shell">
+      <header class="topbar">
+        <div class="breadcrumb"><span>Product Structure</span><b>/</b><strong id="breadcrumbCurrent">Visão geral</strong></div>
+        <div class="topbar-right"><span class="api-indicator"><i></i> API conectada</span><div class="avatar">PS</div></div>
+      </header>
+      <main class="main-content">
+        <div id="toast" class="toast-message" role="status" aria-live="polite"></div>
 
-<table class="table align-middle">
-    <thead>
-        <tr>
-            <th style="width: 35%;">Item</th>
-            <th style="width: 15%;">Quantidade</th>
-            <th style="width: 15%;">Preço unitário</th>
-            <th style="width: 15%;">Subtotal</th>
-            <th style="width: 20%;" class="text-end">Ações</th>
-        </tr>
-    </thead>
+        <section class="view active" id="view-inicio">
+          <div class="page-heading"><div><div class="eyebrow">PAINEL DE CONTROLE</div><h1>Bom trabalho começa<br>com uma boa estrutura.</h1><p>Acompanhe seus itens e fórmulas em um só lugar.</p></div><button class="button button-primary" data-go="formulas"><span>＋</span> Nova fórmula</button></div>
+          <div class="stats-grid">
+            <article class="stat-card"><div class="stat-icon sage">▦</div><span class="stat-label">ITENS CADASTRADOS</span><strong id="statItems">—</strong><small>Itens disponíveis no catálogo</small></article>
+            <article class="stat-card"><div class="stat-icon lavender">⌘</div><span class="stat-label">FÓRMULAS ATIVAS</span><strong id="statFormulas">—</strong><small>Estruturas de produto salvas</small></article>
+            <article class="stat-card stat-feature"><div class="stat-icon cream">↗</div><span class="stat-label">PRÓXIMO PASSO</span><strong>Monte uma estrutura</strong><small>Adicione componentes à fórmula de um produto.</small><button class="text-action" data-go="formulas">Explorar fórmulas <span>→</span></button></article>
+          </div>
+          <div class="section-heading"><div><div class="eyebrow">ACESSO RÁPIDO</div><h2>Continue por aqui</h2></div></div>
+          <div class="quick-grid">
+            <button class="quick-card" data-go="itens"><span class="quick-icon sage">＋</span><span><strong>Cadastrar item</strong><small>Adicione um produto ou componente ao catálogo.</small></span><b>→</b></button>
+            <button class="quick-card" data-go="formulas"><span class="quick-icon lavender">⌘</span><span><strong>Ver fórmulas</strong><small>Explore e gerencie estruturas de produtos.</small></span><b>→</b></button>
+          </div>
+          <div class="section-heading recent-heading"><div><div class="eyebrow">ATUALIZADAS RECENTEMENTE</div><h2>Suas fórmulas</h2></div><button class="text-action" data-go="formulas">Ver todas <span>→</span></button></div>
+          <div id="recentFormulas" class="recent-list"></div>
+        </section>
 
-    <tbody>
-        <tr>
-            <td>
-                <button class="btn btn-sm btn-outline-secondary"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#componentesCaneta">
-                    Caneta
-                </button>
-            </td>
+        <section class="view" id="view-itens">
+          <div class="page-heading compact"><div><div class="eyebrow">CATÁLOGO</div><h1>Itens</h1><p>Cadastre e consulte produtos e componentes disponíveis.</p></div><div class="heading-badge"><span>▦</span><strong id="itemsHeadingCount">0</strong><small>itens</small></div></div>
+          <div class="content-grid">
+            <article class="panel form-panel"><div class="panel-heading"><span class="panel-icon sage">＋</span><div><h2>Novo item</h2><p>Preencha as informações do catálogo.</p></div></div>
+              <form id="itemForm">
+                <label class="field-label" for="itemName">Nome do item</label><input class="field" id="itemName" name="nome" maxlength="150" placeholder="Ex.: Caneta esferográfica" required>
+                <label class="field-label" for="itemDescription">Descrição <span class="optional">OPCIONAL</span></label><textarea class="field" id="itemDescription" name="descricao" rows="3" placeholder="Uma breve descrição do item"></textarea>
+                <label class="field-label" for="itemPrice">Preço unitário</label><div class="input-prefix"><span>R$</span><input class="field" id="itemPrice" name="preco" type="number" min="0" step="0.01" placeholder="0,00" required></div>
+                <button class="button button-primary full-button" type="submit">Salvar item <span>→</span></button>
+              </form>
+            </article>
+            <article class="panel table-panel"><div class="panel-heading table-heading"><div><h2>Catálogo de itens</h2><p>Todos os itens cadastrados no sistema.</p></div><span class="count-pill" id="itemsCountPill">0 itens</span></div><div id="itemsTable" class="table-wrap"></div></article>
+          </div>
+        </section>
 
-            <td>1</td>
-            <td>R$ 2,50</td>
-            <td>R$ 2,50</td>
-
-            <td>
-                <div class="d-flex justify-content-end gap-2">
-                    <button type="button" class="btn btn-primary btn-sm btn-editar">
-                        Editar
-                    </button>
-                    <button type="button" class="btn btn-danger btn-sm btn-remover">
-                        Remover
-                    </button>
-                </div>
-            </td>
-        </tr>
-
-        <tr>
-            <td colspan="5" class="p-0">
-                <div class="collapse" id="componentesCaneta">
-                    <table class="table table-sm mb-0">
-                        <tbody>
-
-                            <tr>
-                                <td style="width: 35%;" class="ps-5">↳ Tinta</td>
-                                <td style="width: 15%;">1</td>
-                                <td style="width: 15%;">R$ 0,80</td>
-                                <td style="width: 15%;">R$ 0,80</td>
-                                <td style="width: 20%;">
-                                    <div class="d-flex justify-content-end gap-2">
-                                        <button type="button" class="btn btn-primary btn-sm btn-editar">
-                                            Editar
-                                        </button>
-                                        <button type="button" class="btn btn-danger btn-sm btn-remover">
-                                            Remover
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td class="ps-5">↳ Corpo</td>
-                                <td>1</td>
-                                <td>R$ 1,00</td>
-                                <td>R$ 1,00</td>
-                                <td>
-                                    <div class="d-flex justify-content-end gap-2">
-                                        <button type="button" class="btn btn-primary btn-sm btn-editar">
-                                            Editar
-                                        </button>
-                                        <button type="button" class="btn btn-danger btn-sm btn-remover">
-                                            Remover
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="ps-5">↳ Tampa</td>
-                                <td>1</td>
-                                <td>R$ 0,70</td>
-                                <td>R$ 0,70</td>
-                                <td>
-                                    <div class="d-flex justify-content-end gap-2">
-                                        <button type="button" class="btn btn-primary btn-sm btn-editar">
-                                            Editar
-                                        </button>
-                                        <button type="button" class="btn btn-danger btn-sm btn-remover">
-                                            Remover
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </td>
-        </tr>
-    </tbody>
-</table>
-
-
-</div>
-<div class="modal fade" id="modalEditar" tabindex="-1"
-     aria-labelledby="modalEditarLabel" aria-hidden="true">
-
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalEditarLabel">
-                    Editar item
-                </h5>
-
-                <button type="button" class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Fechar"></button>
-            </div>
-
-            <div class="modal-body">
-                <form id="formEditar">
-
-                    <div class="mb-3">
-                        <label for="editarNome" class="form-label">Nome</label>
-                        <input type="text" class="form-control"
-                               id="editarNome" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="editarQuantidade" class="form-label">
-                            Quantidade
-                        </label>
-                        <input type="number" class="form-control"
-                               id="editarQuantidade" min="1" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="editarPreco" class="form-label">
-                            Preço unitário
-                        </label>
-                        <input type="number" class="form-control"
-                               id="editarPreco" min="0" step="0.01" required>
-                    </div>
-
-                </form>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary"
-                        data-bs-dismiss="modal">
-                    Cancelar
-                </button>
-
-                <button type="submit" form="formEditar"
-                        class="btn btn-primary">
-                    Salvar alterações
-                </button>
-            </div>
-
-        </div>
+        <section class="view" id="view-formulas">
+          <div class="page-heading compact"><div><div class="eyebrow">ESTRUTURA DE PRODUTOS</div><h1>Fórmulas</h1><p>Defina produtos e explore cada nível de componentes.</p></div><div class="heading-badge lavender-badge"><span>⌘</span><strong id="formulasHeadingCount">0</strong><small>fórmulas</small></div></div>
+          <div class="content-grid formula-grid">
+            <article class="panel form-panel"><div class="panel-heading"><span class="panel-icon lavender">✳</span><div><h2>Nova fórmula</h2><p>A fórmula começa com um produto já cadastrado.</p></div></div>
+              <form id="formulaForm"><label class="field-label" for="formulaItem">Produto final</label><select class="field" id="formulaItem" required><option value="">Selecione um produto</option></select><div class="helper-text">O nome da fórmula será o mesmo do item escolhido. A API cria automaticamente a raiz da estrutura.</div><button class="button button-primary full-button" type="submit">Criar fórmula <span>→</span></button></form>
+              <div class="form-divider"></div><div class="panel-subheading"><strong>Fórmulas existentes</strong><span class="count-pill" id="formulaCountPill">0</span></div><div id="formulaList" class="formula-list"></div>
+            </article>
+            <article class="panel detail-panel" id="formulaDetail"><div class="empty-detail"><span class="empty-art">⌘</span><h2>Escolha uma fórmula</h2><p>Selecione uma fórmula da lista para visualizar sua explosão e gerenciar componentes.</p></div></article>
+          </div>
+        </section>
+      </main>
+      <footer class="page-footer"><span>Product Structure <b>·</b> Projeto acadêmico</span><span>ESTRUTURAS DE PRODUTOS</span></footer>
     </div>
-</div>
-
-<script src="js/bootstrap.bundle.min.js"></script>
-<script src="js/script.js"></script>
+  </div>
+  <script src="/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/script.js"></script>
 </body>
 </html>

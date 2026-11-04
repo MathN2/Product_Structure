@@ -1,9 +1,13 @@
+from pathlib import Path
+
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
-from product_structure.controller.formula_controller import router as formula_router
+from product_structure.controller.formula_controller import (
+    router as formula_router,
+)
 from product_structure.controller.item_controller import item_router
-
 from product_structure.core.exceptions import (
     FormulaNotFoundError,
     ItemError,
@@ -11,6 +15,7 @@ from product_structure.core.exceptions import (
     TreeError,
 )
 
+INTERFACE_DIR = Path(__file__).resolve().parents[2] / "interface"
 
 app = FastAPI(
     title="Product Structure API",
@@ -20,10 +25,16 @@ app = FastAPI(
 
 @app.get("/")
 def home():
+    return FileResponse(INTERFACE_DIR / "index.html")
+
+@app.get("/health")
+def health():
     return {"mensagem": "Product Structure API está funcionando!"}
 
 app.include_router(formula_router)
-# app.include_router(item_router)
+app.include_router(item_router)
+app.mount("/css", StaticFiles(directory=INTERFACE_DIR / "css"), name="css")
+app.mount("/js", StaticFiles(directory=INTERFACE_DIR / "js"), name="js")
 
 
 @app.exception_handler(TreeError)

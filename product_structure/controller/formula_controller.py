@@ -6,11 +6,14 @@ from product_structure.schemas.formula_scheme import FormulaCreate
 from product_structure.schemas.node_schema import NodeCreate
 
 from product_structure.services.formula_service import (
+    atualizar_nome_formula,
     buscar_todas_formulas,
     buscar_arvore_formula,
     criar_formula,
-    criar_node as criar_node_formula,
     explosao,
+    inserir_node as inserir_node_formula,
+    remover_formula,
+    remover_item_formula,
 )
 
 
@@ -20,9 +23,9 @@ router = APIRouter(
 )
 
 
-# -----------------------------
-#        ENDPOINT GET
-# -----------------------------
+# ====================================
+#               GET
+# ====================================
 @router.get("/")
 def listar_formulas():
     return buscar_todas_formulas()
@@ -32,9 +35,9 @@ def buscar_formula(formula_id: int):
     arvore = buscar_arvore_formula(formula_id)
     return explosao(arvore)
 
-# -----------------------------
-#       ENDPOINT POST
-# -----------------------------
+# ====================================
+#               POST
+# ====================================
 @router.post("/", status_code=201)
 def criar(formula: FormulaCreate):
     resultado = criar_formula(formula.nome)
@@ -53,10 +56,58 @@ def criar_node(formula_id: int, node: NodeCreate):
         parent_id=node.parent_id,
     )
     
-    resultado = criar_node_formula(dados=dados)
+    resultado = inserir_node_formula(dados)
     return {
         "node_id": resultado.node_id,
         "item_id": resultado.value.id,
         "parent_id": resultado.parent_id,
         "quantidade": resultado.quantidade
+    }
+
+
+# ====================================
+#               PATCH
+# ====================================
+
+@router.patch("/{formula_id}")
+def atualizar_formula(formula_id: int, formula: FormulaCreate):
+    atualizar_nome_formula(formula_id, formula.nome)
+
+    return {
+        "mensagem": "Fórmula atualizada com sucesso.",
+        "id": formula_id,
+        "nome": formula.nome
+    }
+
+
+# ====================================
+#              DELETE
+# ====================================
+
+@router.delete("/{formula_id}")
+def excluir_formula(formula_id: int):
+    remover_formula(formula_id)
+
+    return {
+        "mensagem": "Fórmula removida com sucesso."
+    }
+
+
+@router.delete("/{formula_id}/nodes/{node_id}")
+def excluir_node(formula_id: int, node_id: int):
+    # Verifica se o nó pertence à fórmula informada.
+    arvore = buscar_arvore_formula(formula_id)
+
+    if node_id not in arvore.nodes:
+        from fastapi import HTTPException
+        raise HTTPException(
+            status_code=404,
+            detail="Componente não encontrado nesta fórmula."
+        )
+
+    remover_item_formula(node_id)
+
+    return {
+        "mensagem": "Componente removido com sucesso.",
+        "node_id": node_id
     }

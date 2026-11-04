@@ -64,7 +64,7 @@ def criar_formula(nome_formula):
 
 def inserir_node(node_dto: NodeDTO):
     arvore = buscar_arvore_formula(node_dto.formula_id)
-    _validar_item_raiz(arvore, node_dto.node_id)
+    _validar_item_raiz(arvore, node_dto.item_id)
 
     result_id = inserir_item_formula(node_dto)
 
@@ -250,6 +250,7 @@ def explosao(formula: ArvoreFormula):
     root = formula.root
 
     resultado = {
+        "node_id": root.node_id,
         "nome": root.value.nome,
         "descricao": root.value.descricao,
         "preco": implosao(formula.id),
@@ -264,6 +265,7 @@ def explosao(formula: ArvoreFormula):
 
 def _formatacao_explosao(node: Node):
     resultado = {
+        "node_id": node.node_id,
         "nome": node.value.nome,
         "descricao": node.value.descricao,
         "quantidade": node.quantidade,
@@ -289,15 +291,26 @@ def implosao(formula_id):
 
 
 # VALIDAÇAO
-def _validar_item_raiz(arvore: ArvoreFormula, novo_item_id):
+def _validar_item_raiz(arvore: ArvoreFormula, novo_item_id: int):
     if arvore.root and novo_item_id == arvore.root.value.id:
-        raise NodeValueError("O item raiz não pode ser inserido como componente.")
+        raise NodeValueError(
+            "O item raiz não pode ser inserido como componente."
+        )
 
-def _validar_ancestralidade(arvore: ArvoreFormula, node: Node, novo_pai: Node):
-    atual = novo_pai
+def _validar_ancestralidade(
+    arvore: ArvoreFormula,
+    node: Node,
+    novo_pai: Node
+):
+    atual: Node | None = novo_pai
 
     while atual is not None:
         if atual.node_id == node.node_id:
-            raise NodeValueError("A definiçao do parent_id criaria um ciclo.")
+            raise NodeValueError(
+                "A definição do parent_id criaria um ciclo."
+            )
 
-        atual = arvore.get_node(atual.parent_id)
+        if atual.parent_id is None:
+            break
+
+        atual = arvore.nodes.get(atual.parent_id)

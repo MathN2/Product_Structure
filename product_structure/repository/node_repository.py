@@ -19,32 +19,28 @@ def inserir_item_formula(item: NodeDTO):
         return item_id
 
 
-def remover_item_formula_bd(item_formula_id):
+def remover_item_formula_bd(node_id):
     with get_connection() as conn, conn.cursor(row_factory=dict_row) as cursor:
-        cursor.execute(
-            "DELETE FROM item_formula WHERE id = %s;", (item_formula_id,)
-        )
-
         cursor.execute(
             """
                 DELETE FROM item_formula
-                WHERE parent_id = %s;
+                WHERE id = %s
+                RETURNING id;
             """,
-            (item_formula_id,),
+            (node_id,)
         )
 
-        if cursor.rowcount == 0:
-            raise RuntimeError("Falha em tentar apagar item.")
+        return cursor.fetchone()
 
 
-def buscar_item_formula_bd(item_id):
-    with get_connection().cursor(row_factory=dict_row) as cursor:
+def buscar_item_formula_bd(node_id):
+    with get_connection() as conn, conn.cursor(row_factory=dict_row) as cursor:
         cursor.execute(
             """
                 SELECT * FROM item_formula
-                WHERE item_id = %s;
+                WHERE id = %s;
             """,
-            (item_id,)
+            (node_id,)
         )
 
         return cursor.fetchone()

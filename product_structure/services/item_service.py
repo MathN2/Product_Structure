@@ -1,3 +1,5 @@
+from product_structure.core.exceptions import ItemError
+
 from product_structure.dto.item_dto import ItemDTO
 from product_structure.models.item_formula import ItemFormula
 from product_structure.repository.item_repository import (
@@ -14,10 +16,14 @@ from product_structure.repository.item_repository import (
 #       FUNÇOES BANCO DE DADOS
 # ====================================
 def cadastrar_item(item_dto: ItemDTO):
-    item = criar_item(item_dto)
-    inserir_item_bd(item_dto)
+    item_id = inserir_item_bd(item_dto)
 
-    return item
+    if item_id is None:
+        raise ItemError("Falha ao cadastrar item.")
+
+    item_dto.item_id = item_id
+
+    return item_dto
 
 
 def atualizar_item(item_dto: ItemDTO):
