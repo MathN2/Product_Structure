@@ -31,6 +31,33 @@ def inserir_formula_bd():
         )
 
 
+def atualizar_nome_formula_bd(formula_id, novo_nome):
+    with get_connection() as conn, conn.cursor(row_factory=dict_row) as cursor:
+        cursor.execute(
+            """
+                UPDATE formula
+                SET nome = %s
+                WHERE id = %s
+                RETURNING *
+            """,
+            (novo_nome, formula_id),
+        )
+
+        return cursor.fetchone()
+
+
+def remover_formula_bd(formula_id):
+    with get_connection() as conn, conn.cursor() as cursor:
+        cursor.execute(
+            "DELETE FROM item_formula WHERE formula_id = %s", (formula_id,)
+        )
+
+        cursor.execute("DELETE FROM formula WHERE id = %s", (formula_id,))
+
+        if cursor.rowcount == 0:
+            raise RuntimeError("Falha em apagar formula.")
+
+
 # FUNÇOES DE BUSCA
 def buscar_todas_formulas_bd():
     with get_connection() as conn, conn.cursor(row_factory=dict_row) as cursor:

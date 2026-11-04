@@ -43,9 +43,25 @@ def buscar_item_id(id):
 # ====================================
 #          FUNÇOES DA ARVORE
 # ====================================
-def criar_item(item_dto: ItemDTO):
-    nome = item_dto.nome
-    descricao = item_dto.descricao
-    preco = item_dto.preco
+def criar_item(dados: ItemDTO | dict):
+    if isinstance(dados, ItemDTO):
+        return _criar_item_dto(dados)
 
-    return ItemFormula(nome, descricao, preco)
+    elif isinstance(dados, dict):
+        return _criar_item_dict(dados)
+
+    raise TypeError("Tipo de dado não suportado.")
+
+def _criar_item_dto(item_dto: ItemDTO):
+    return ItemFormula(
+        item_dto.nome,
+        item_dto.descricao,
+        item_dto.preco
+    )
+
+def _criar_item_dict(item_dict: dict):
+    return ItemFormula(
+        item_dict["nome"],
+        item_dict["descricao"],
+        item_dict["preco"]
+    )

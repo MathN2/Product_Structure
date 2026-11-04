@@ -19,15 +19,62 @@ def inserir_item_formula(item: NodeDTO):
         return item_id
 
 
+def remover_item_formula_bd(item_formula_id):
+    with get_connection() as conn, conn.cursor(row_factory=dict_row) as cursor:
+        cursor.execute(
+            "DELETE FROM item_formula WHERE id = %s", (item_formula_id,)
+        )
+
+        cursor.execute(
+            """
+                    DELETE FROM item_formula WHERE parent_id = %s
+                """,
+            (item_formula_id,),
+        )
+
+        if cursor.rowcount == 0:
+            raise RuntimeError("Falha em tentar apagar item.")
+
+
+def buscar_itens_formula_bd(formula_id):
+    with get_connection() as conn, conn.cursor(row_factory=dict_row) as cursor:
+        cursor.execute(
+            """
+                SELECT * FROM item_formula
+                WHERE formula_id = %s
+                RETURNING *
+            """,
+            (formula_id,),
+        )
+
+        return cursor.fetchall()
+
+
+def verificar_item_formula_existe(item_formula_id):
+    with get_connection().cursor(row_factory=dict_row) as cursor:
+        cursor.execute(
+            """
+                SELECT EXISTS (
+                    SELECT 1
+                    FROM item_formula
+                    WHERE id = %s
+                )
+            """,
+            (item_formula_id,),
+        )
+
+        return cursor.fetchone()
+
+
 def implosao_produto(formula_id):
-    with get_connection() as conn, conn.cursor() as cursor:
+    with get_connection() as conn, conn.cursor(row_factory=dict_row) as cursor:
         cursor.execute(
             """
                 SELECT SUM(preco) AS total
                 FROM item_formula
                 WHERE formula_id = %s
             """,
-            (formula_id,)
+            (formula_id,),
         )
 
         return cursor.fetchone()

@@ -55,12 +55,3 @@ class ArvoreFormula:
 
     def buscar_por_id(self, search_id: int) -> Node | None:
         return self.nodes.get(search_id)
-
-    def buscar_por_nome(self, name: str) -> dict[int, Node]:
-        resultado = {}
-
-        for node in self.nodes.values():
-            if node.value.nome == name:
-                resultado[node.node_id] = node
-
-        return resultado
