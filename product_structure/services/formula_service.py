@@ -16,6 +16,7 @@ from product_structure.repository.item_repository import (
     buscar_item_por_nome_bd,
 )
 from product_structure.repository.node_repository import (
+    buscar_item_formula_bd,
     buscar_itens_formula_bd,
     implosao_produto,
     inserir_item_formula,
@@ -62,6 +63,9 @@ def criar_formula(nome_formula):
 
 
 def inserir_node(node_dto: NodeDTO):
+    arvore = buscar_arvore_formula(node_dto.formula_id)
+    _validar_item_raiz(arvore, node_dto.node_id)
+
     result_id = inserir_item_formula(node_dto)
 
     if result_id is None:
@@ -76,6 +80,29 @@ def inserir_node(node_dto: NodeDTO):
 def atualizar_nome_formula(formula_id, novo_nome):
     atualizar_nome_formula_bd(formula_id, novo_nome)
 
+
+def mover_node(node_id, novo_pai_id):
+    node_dict = buscar_item_formula(node_id)
+
+    if node_dict is None:
+        raise NodeValueError("Node não encontrado.")
+    
+    node_pai_dict = buscar_item_formula(novo_pai_id)
+
+    if not node_pai_dict is None:
+        arvore = buscar_arvore_formula(node_dict.get("formula_id"))
+        node = criar_node(node_dict)
+        node_pai = criar_node(node_pai_dict)
+
+        _validar_ancestralidade(arvore, node, node_pai)
+
+        node.parent_id = node_pai.node_id
+        node_pai.children.append(node)
+
+        return node
+
+    raise NodeValueError("O novo pai não existe.")
+    
 
 def remover_formula(formula_id):
     resultado_busca = buscar_formula_por_id(formula_id)
@@ -110,6 +137,10 @@ def buscar_formula_por_id(id):
     return buscar_formula_por_id_bd(id)
 
 
+def buscar_item_formula(item_id):
+    return buscar_item_formula_bd(item_id)
+
+
 def buscar_itens_formula(formula_id):
     return buscar_itens_formula_bd(formula_id)
 
@@ -127,15 +158,26 @@ def criar_node(dados: NodeDTO | dict):
     raise TypeError("Tipo de dado não suportado.")
 
 def _criar_node_dto(node_dto: NodeDTO):
-    item_dict = buscar_item_por_id_bd(node_dto.item_id)
-    
-    if item_dict is None:
-        raise NodeEmptyError("Não será possivel criar o Node porque o valor está vazio.")
+    dados = {
+        "id": node_dto.node_id,
+        "formula_id": node_dto.formula_id,
+        "item_id": node_dto.item_id,
+        "parent_id": node_dto.parent_id,
+        "quantidade": node_dto.quantidade
+    }
 
-    return _criar_node_dict(item_dict)
+    return _criar_node_dict(dados)
 
 def _criar_node_dict(item_dict: dict):
-    item = criar_item(item_dict)
+    item_preparado = item_dict
+
+    if "item_id" in item_dict.keys():
+        item_preparado = buscar_item_por_id_bd(item_dict.get("item_id"))
+        
+        if item_preparado is None:
+            raise NodeEmptyError("Não será possivel criar o Node porque o valor está vazio.")
+    
+    item = criar_item(item_preparado)
 
     return Node(
         value = item,
@@ -244,3 +286,18 @@ def implosao(formula_id):
         )
 
     return implosao_produto(formula_id)
+
+
+# VALIDAÇAO
+def _validar_item_raiz(arvore: ArvoreFormula, novo_item_id):
+    if arvore.root and novo_item_id == arvore.root.value.id:
+        raise NodeValueError("O item raiz não pode ser inserido como componente.")
+
+def _validar_ancestralidade(arvore: ArvoreFormula, node: Node, novo_pai: Node):
+    atual = novo_pai
+
+    while atual is not None:
+        if atual.node_id == node.node_id:
+            raise NodeValueError("A definiçao do parent_id criaria um ciclo.")
+
+        atual = arvore.get_node(atual.parent_id)

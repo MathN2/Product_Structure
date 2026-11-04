@@ -3,5 +3,5 @@ from pydantic import BaseModel
 
 class NodeCreate(BaseModel):
     item_id: int
-    quantidade: float
+    quantidade: int
     parent_id: int | None = None

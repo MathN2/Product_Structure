@@ -1,5 +1,6 @@
 class ItemFormula:
     def __init__(self, nome, descricao="", preco=0.0):
+        self.id: int | None = None
         self.nome = nome
         self.descricao = descricao
         self.preco = preco

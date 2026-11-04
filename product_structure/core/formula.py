@@ -9,6 +9,9 @@ class ArvoreFormula:
         self.root: Node | None = None
         self.nodes: dict[int, Node] = {}
 
+    def get_node(self, node_id):
+        return self.nodes[node_id]
+
     def get_nodes(self):
         return self.nodes.values()
 

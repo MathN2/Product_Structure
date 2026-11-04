@@ -11,7 +11,7 @@ def inserir_item_bd(item: ItemDTO):
             """
                 INSERT INTO itens (nome, descricao, preco)
                 VALUES (%s, %s, %s)
-                RETURNING id
+                RETURNING id;
             """,
             (item.nome, item.descricao, item.preco),
         )
@@ -33,7 +33,7 @@ def atualizar_item_bd(item_dto: ItemDTO):
                 SET nome = %s,
                     descricao = %s,
                     preco = %s
-                WHERE id = %s    
+                WHERE id = %s;
             """,
             (
                 item_dto.nome,
@@ -53,7 +53,7 @@ def remover_item_bd(id):
                 SELECT EXISTS (
                     SELECT 1
                     FROM item_formula
-                    WHERE item_id = %s
+                    WHERE item_id = %s;
                 )
             """,
             (id,),
@@ -76,7 +76,7 @@ def remover_item_bd(id):
             """
                 DELETE FROM itens
                 WHERE id = %s
-                RETURNING *
+                RETURNING *;
             """,
             (id,),
         )
@@ -87,7 +87,7 @@ def remover_item_bd(id):
 
 def buscar_todos_itens_bd():
     with get_connection() as conn, conn.cursor(row_factory=dict_row) as cursor:
-        cursor.execute("SELECT * FROM itens")
+        cursor.execute("SELECT * FROM itens;")
         result = cursor.fetchall()
 
         return result
@@ -98,8 +98,7 @@ def buscar_item_por_nome_bd(nome):
         cursor.execute(
             """
                 SELECT * FROM itens
-                WHERE nome = %s
-                RETURNING *
+                WHERE nome = %s;
             """,
             (nome,),
         )
@@ -113,11 +112,9 @@ def buscar_item_por_id_bd(id):
         cursor.execute(
             """
                 SELECT * FROM itens
-                WHERE id = %s
-                RETURNING *
+                WHERE id = %s;
             """,
             (id,),
         )
 
-        result = cursor.fetchone()
-        return result
+        return cursor.fetchone()
