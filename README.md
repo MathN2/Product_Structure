@@ -64,22 +64,28 @@ poetry install
 
 O Poetry utilizará as configurações do projeto para instalar as dependências necessárias.
 
-3. Configure as variáveis de ambiente
+### 3. Configure as variáveis de ambiente
 
 O projeto utiliza um arquivo ".env" para armazenar configurações da aplicação e credenciais de acesso ao banco de dados.
 
 Na raiz do projeto, copie o arquivo de exemplo:
 
-Linux:
+# Linux e macOS
 
 ```bash
 cp .env.example .env
 ```
 
-Windows:
+::Windows (CMD)
 
 ```cmd
 copy .env.example .env
+```
+
+::Windows (Powershell)
+
+```pwsh
+Copy-Item .env.example .env
 ```
 
 Abra o arquivo ".env" e configure as variáveis de acordo com seu ambiente:
@@ -104,6 +110,46 @@ O formato da conexão é:
 `postgresql://USUARIO:SENHA@HOST:PORTA/NOME_DO_BANCO`
 
 Importante: o arquivo ".env" contém informações sensíveis e não deve ser enviado ao repositório. Utilize o ".env.example" como modelo para outros ambientes.
+
+### 4. Configure o banco de dados
+
+O projeto utiliza PostgreSQL como sistema de gerenciamento de banco de dados.
+
+## 4.1. Crie o banco de dados
+
+Certifique-se de que o PostgreSQL esteja instalado e em execução.
+
+Acesse o terminal do PostgreSQL:
+
+`sudo -u postgres psql`
+
+Crie o banco de dados:
+
+CREATE DATABASE product_structure;
+
+Opcionalmente, crie um usuário específico para a aplicação:
+
+CREATE USER seu_user WITH PASSWORD 'sua_senha';
+
+GRANT ALL PRIVILEGES ON DATABASE product_structure TO seu_user;
+
+Caso utilize um usuário específico, configure suas credenciais na variável "DATABASE_URL" do arquivo ".env".
+
+## 4.2. Crie as tabelas
+
+Após criar o banco de dados, execute o script "scheme.sql", localizado na raiz do projeto, para criar as tabelas e os índices necessários.
+
+No terminal, execute:
+
+`psql -U seu_user -d product_structure -f scheme.sql`
+
+Caso esteja utilizando o usuário padrão "postgres":
+
+`sudo -u postgres psql -d product_structure -f scheme.sql`
+
+Após a execução, o banco estará preparado para armazenar os dados da aplicação.
+
+«Observação: o script cria as tabelas "itens", "formula" e "item_formula", além dos índices e das restrições de integridade necessários para o relacionamento entre os registros.»
 
 ## Executando o projeto
 
