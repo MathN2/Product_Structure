@@ -125,13 +125,15 @@ Acesse o terminal do PostgreSQL:
 
 Crie o banco de dados:
 
-CREATE DATABASE product_structure;
+`CREATE DATABASE product_structure;`
 
 Opcionalmente, crie um usuário específico para a aplicação:
 
+```sql
 CREATE USER seu_user WITH PASSWORD 'sua_senha';
 
 GRANT ALL PRIVILEGES ON DATABASE product_structure TO seu_user;
+```
 
 Caso utilize um usuário específico, configure suas credenciais na variável "DATABASE_URL" do arquivo ".env".
 
